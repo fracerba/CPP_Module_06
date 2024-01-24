@@ -56,7 +56,36 @@ int CheckLimits(std::string str)
 
 int CheckValid(std::string str)
 {
-    
+    int i = -1;
+    int p = 0;
+
+    if (str.length() == 1)
+        return (0);
+    while (str[++i])
+    {
+        if(!isdigit(str[i]) && str[i] != '.' && str[i] != 'f' && str[i] != '+' && str[i] != '-')
+        {
+            std::cout << "Invalid input" << std::endl;
+            return (1);
+        }
+        if (str[i] == 'f' && str[i + 1])
+        {
+            std::cout << "Invalid input" << std::endl;
+            return (1);
+        }
+        if (str[i] == '.')
+            p++;
+        if ((str[i] == '+' || str[i] == '-') && i != 0)
+        {
+            std::cout << "Invalid input" << std::endl;
+            return (1);
+        }
+    }
+    if (p > 1)
+    {
+        std::cout << "Invalid input" << std::endl;
+        return (1);
+    }
     return (0);
 }
 
@@ -73,7 +102,7 @@ int CheckType(std::string str)
 
 void ScalarConverter::convert(std::string str)
 {
-    long long int n;
+    long double n;
     char c;
     int i;
     float f;
@@ -112,10 +141,14 @@ void ScalarConverter::convert(std::string str)
         c = static_cast<char>(d);
         f = static_cast<float>(d);
     }
-    n = std::stoll(str);
+
+    if (n == 1)
+        n = static_cast<long double>(c);
+    else
+        n = static_cast<long double>(atoll(str.c_str()));
 
     std::cout << "char: ";
-    if (n < 127)
+    if (n <= 127)
     {
         if (c < 32 || c > 126)
             std::cout << "Non displayable" << std::endl;
@@ -127,17 +160,29 @@ void ScalarConverter::convert(std::string str)
 
     std::cout << "int: ";
     if (n <= INT_MAX && n >= INT_MIN)
-        std::cout << "'" << i << "'" << std::endl;
+        std::cout << i << std::endl;
     else
         std::cout << "Overflow" << std::endl;
+
     std::cout << "float: ";
     if (n <= FLT_MAX && n >= FLT_MIN)
-        std::cout << "'" << f << "'" << std::endl;
+    {
+        if (f - static_cast<int>(f) == 0)
+            std::cout << f << ".0f" << std::endl;
+        else
+            std::cout << f << "f" << std::endl;
+    }
     else
         std::cout << "Overflow" << std::endl;
+
     std::cout << "double: ";
-   if (n <= DBL_MAX && n >= DBL_MIN)
-        std::cout << "'" << d << "'" << std::endl;
+    if (n <= DBL_MAX && n >= DBL_MIN)
+    {
+        if (d - static_cast<int>(d) == 0)
+            std::cout << d << ".0" << std::endl;
+        else
+            std::cout << d << std::endl;
+    }
     else
         std::cout << "Overflow" << std::endl;
 }
