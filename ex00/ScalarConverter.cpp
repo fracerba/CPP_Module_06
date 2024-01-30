@@ -73,8 +73,13 @@ int CheckValid(std::string str)
             std::cout << "Invalid input" << std::endl;
             return (1);
         }
-        if (str[i] == '.')
+        if (str[i] == '.' && isdigit(str[i + 1]))
             p++;
+        else if (str[i] == '.' && !isdigit(str[i + 1]))
+        {
+            std::cout << "Invalid input" << std::endl;
+            return (1);
+        }
         if ((str[i] == '+' || str[i] == '-') && i != 0)
         {
             std::cout << "Invalid input" << std::endl;
@@ -95,14 +100,37 @@ int CheckType(std::string str)
         return (1);
     else if (str.find('f') == (str.length() - 1) && str.find('.'))
         return (2);
-    else if (str.find('.'))
+    else if (str.find('.') != std::string::npos)
         return (3);
     return (0);
 }
 
+int getPrecision(std::string str)
+{
+    int i = 0;
+    int p = 0;
+
+    if (str.find('.') == std::string::npos)
+        return (1);
+    while (str[i])
+    {
+        if (str[i] == '.')
+            p = 1;
+        if (p > 0)
+            p++;
+        if (str[i] == 'f')
+            break;
+        i++;
+    }
+    if (p > 4)
+        return (4);
+    return (p - 2);
+}
+
 void ScalarConverter::convert(std::string str)
 {
-    long double n;
+    long double n = 0;
+    int p;
     char c;
     int i;
     float f;
@@ -142,13 +170,17 @@ void ScalarConverter::convert(std::string str)
         f = static_cast<float>(d);
     }
 
+    if (n == 3)
+        p = getPrecision(str);
+    else
+        p = 1;
     if (n == 1)
         n = static_cast<long double>(c);
     else
         n = static_cast<long double>(atoll(str.c_str()));
 
     std::cout << "char: ";
-    if (n <= 127)
+    if (n <= 127 && n >= -128)
     {
         if (c < 32 || c > 126)
             std::cout << "Non displayable" << std::endl;
@@ -164,25 +196,17 @@ void ScalarConverter::convert(std::string str)
     else
         std::cout << "Overflow" << std::endl;
 
+    std::cout << std::fixed << std::setprecision(1);
     std::cout << "float: ";
-    if (n <= FLT_MAX && n >= FLT_MIN)
-    {
-        if (f - static_cast<int>(f) == 0)
-            std::cout << f << ".0f" << std::endl;
-        else
+    if (n <= FLT_MAX && n >= -FLT_MAX)
             std::cout << f << "f" << std::endl;
-    }
     else
         std::cout << "Overflow" << std::endl;
 
+    std::cout << std::fixed << std::setprecision(p);
     std::cout << "double: ";
-    if (n <= DBL_MAX && n >= DBL_MIN)
-    {
-        if (d - static_cast<int>(d) == 0)
-            std::cout << d << ".0" << std::endl;
-        else
+    if (n <= DBL_MAX && n >= -DBL_MAX)
             std::cout << d << std::endl;
-    }
     else
         std::cout << "Overflow" << std::endl;
 }
