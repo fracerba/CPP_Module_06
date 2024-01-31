@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <cmath>
+#include <exception>
 
 class Base
 {

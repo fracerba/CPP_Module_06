@@ -28,7 +28,9 @@ Base *generate(void)
 
 void identify(Base* p)
 {
-    if (dynamic_cast<A*>(p))
+    if (!p)
+        std::cout << "Identificato un puntatore NULL" << std::endl;
+    else if (dynamic_cast<A*>(p))
         std::cout << "Identificato un puntatore di classe A" << std::endl;
     else if (dynamic_cast<B*>(p))
         std::cout << "Identificato un puntatore di classe B" << std::endl;
@@ -40,12 +42,25 @@ void identify(Base* p)
 
 void identify(Base& p)
 {
-    if (dynamic_cast<A*>(&p))
+    try
+    {
+        A &ref = dynamic_cast<A&>(p);
+        (void)ref;
         std::cout << "Identificato un riferimento di classe A" << std::endl;
-    else if (dynamic_cast<B*>(&p))
+    }
+    catch(const std::exception& e) {}
+    try
+    {
+        B &ref = dynamic_cast<B&>(p);
+        (void)ref;
         std::cout << "Identificato un riferimento di classe B" << std::endl;
-    else if (dynamic_cast<C*>(&p))
+    }
+    catch(const std::exception& e) {}
+    try
+    {
+        C &ref = dynamic_cast<C&>(p);
+        (void)ref;
         std::cout << "Identificato un riferimento di classe C" << std::endl;
-    else
-        std::cout << "Identificato un riferimento di classe Base" << std::endl;
+    }
+    catch(const std::exception& e) {}
 }
